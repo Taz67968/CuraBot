@@ -33,13 +33,19 @@ import { validationSchema } from './config/validation.schema';
 
     // Database connection
     TypeOrmModule.forRootAsync({
-      useFactory: () => ({
-        type: 'postgres',
-        url: process.env.DATABASE_URL,
-        autoLoadEntities: true,
-        synchronize: process.env.NODE_ENV !== 'production',
-        logging: process.env.NODE_ENV === 'development',
-      }),
+      useFactory: () => {
+        const dbUrl = process.env.DATABASE_URL || '';
+        const isSqlite = dbUrl.startsWith('sqlite:');
+
+        return {
+          type: isSqlite ? 'sqlite' : 'postgres',
+          url: dbUrl,
+          database: isSqlite ? dbUrl.replace('sqlite:', '') : undefined,
+          autoLoadEntities: true,
+          synchronize: process.env.NODE_ENV !== 'production',
+          logging: false, // Disable SQL query logging
+        };
+      },
     }),
 
     // Redis queue for reminders

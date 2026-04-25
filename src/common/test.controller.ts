@@ -36,15 +36,28 @@ export class TestController {
   async createTestPatient(
     @Body() body: { phoneNumber: string; name?: string; language?: Language },
   ) {
-    this.logger.log(`Creating test patient: ${body.phoneNumber}`);
-    const patient = await this.patientsService.findOrCreate(body.phoneNumber);
-    if (body.name) {
-      await this.patientsService.update(patient.id, { name: body.name });
+    try {
+      const patient = await this.patientsService.findOrCreate(body.phoneNumber);
+      if (body.name) {
+        await this.patientsService.update(patient.id, { name: body.name });
+      }
+      if (body.language) {
+        await this.patientsService.update(patient.id, { language: body.language as Language });
+      }
+      return {
+        success: true,
+        patient: {
+          id: patient.id,
+          phoneNumber: patient.phoneNumber,
+          name: patient.name,
+          language: patient.language,
+        },
+      };
+    } catch (error) {
+      // Log only error type, not data
+      this.logger.error(`Patient creation failed: ${error.constructor.name}`);
+      throw error;
     }
-    if (body.language) {
-      await this.patientsService.update(patient.id, { language: body.language as Language });
-    }
-    return { success: true, patient };
   }
 
   /**

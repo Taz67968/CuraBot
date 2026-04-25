@@ -33,15 +33,28 @@ let TestController = TestController_1 = class TestController {
         };
     }
     async createTestPatient(body) {
-        this.logger.log(`Creating test patient: ${body.phoneNumber}`);
-        const patient = await this.patientsService.findOrCreate(body.phoneNumber);
-        if (body.name) {
-            await this.patientsService.update(patient.id, { name: body.name });
+        try {
+            const patient = await this.patientsService.findOrCreate(body.phoneNumber);
+            if (body.name) {
+                await this.patientsService.update(patient.id, { name: body.name });
+            }
+            if (body.language) {
+                await this.patientsService.update(patient.id, { language: body.language });
+            }
+            return {
+                success: true,
+                patient: {
+                    id: patient.id,
+                    phoneNumber: patient.phoneNumber,
+                    name: patient.name,
+                    language: patient.language,
+                },
+            };
         }
-        if (body.language) {
-            await this.patientsService.update(patient.id, { language: body.language });
+        catch (error) {
+            this.logger.error(`Patient creation failed: ${error.constructor.name}`);
+            throw error;
         }
-        return { success: true, patient };
     }
     async getPatient(phoneNumber) {
         const patient = await this.patientsService.findByPhoneNumber(phoneNumber);

@@ -19,7 +19,12 @@ export declare class TestController {
         language?: Language;
     }): Promise<{
         success: boolean;
-        patient: import("../patients/entities/patient.entity").Patient;
+        patient: {
+            id: string;
+            phoneNumber: string;
+            name: string;
+            language: Language;
+        };
     }>;
     getPatient(phoneNumber: string): Promise<{
         error: string;
