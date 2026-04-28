@@ -32,7 +32,7 @@ Return ONLY a JSON object:
   }
 
   /**
-   * Prompt for conversational response generation
+   * Prompt for conversational response generation,
    */
   getConversationPrompt(context: any): string {
     return `You are CuraBot, a helpful healthcare assistant. Continue the conversation naturally based on the context provided.
