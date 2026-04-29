@@ -48,13 +48,17 @@ import { validationSchema } from './config/validation.schema';
       },
     }),
 
-    // Redis queue for reminders
-    BullModule.forRoot({
-      connection: {
-        host: 'localhost',
-        port: 6379,
-      },
-    }),
+    // Redis queue for reminders (optional - disable in environments without Redis)
+    ...(process.env.REDIS_ENABLED !== 'false'
+      ? [
+          BullModule.forRoot({
+            connection: {
+              host: process.env.REDIS_HOST || 'localhost',
+              port: parseInt(process.env.REDIS_PORT || '6379', 10),
+            },
+          }),
+        ]
+      : []),
 
     // Feature modules
     CommonModule,
