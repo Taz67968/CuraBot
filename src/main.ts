@@ -27,6 +27,15 @@ async function bootstrap() {
   // Global prefix for API routes
   app.setGlobalPrefix('api');
 
+  // Root health check endpoint (for Render.com health checks)
+  const fastifyInstance = app.getHttpAdapter().getInstance();
+  fastifyInstance.get('/', (request, reply) => {
+    reply.status(200).send({ status: 'ok', message: 'CuraBot API is running' });
+  });
+  fastifyInstance.head('/', (request, reply) => {
+    reply.status(200).send();
+  });
+
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');
 
