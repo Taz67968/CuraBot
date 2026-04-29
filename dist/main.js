@@ -18,6 +18,13 @@ async function bootstrap() {
         transform: true,
     }));
     app.setGlobalPrefix('api');
+    const fastifyInstance = app.getHttpAdapter().getInstance();
+    fastifyInstance.get('/', (request, reply) => {
+        reply.status(200).send({ status: 'ok', message: 'CuraBot API is running' });
+    });
+    fastifyInstance.head('/', (request, reply) => {
+        reply.status(200).send();
+    });
     const port = process.env.PORT || 3000;
     await app.listen(port, '0.0.0.0');
     common_2.Logger.log(`🚀 CuraBot is running on: http://localhost:${port}/api`, 'Bootstrap');
