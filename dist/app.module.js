@@ -53,12 +53,16 @@ exports.AppModule = AppModule = __decorate([
                     };
                 },
             }),
-            bullmq_1.BullModule.forRoot({
-                connection: {
-                    host: 'localhost',
-                    port: 6379,
-                },
-            }),
+            ...(process.env.REDIS_ENABLED !== 'false'
+                ? [
+                    bullmq_1.BullModule.forRoot({
+                        connection: {
+                            host: process.env.REDIS_HOST || 'localhost',
+                            port: parseInt(process.env.REDIS_PORT || '6379', 10),
+                        },
+                    }),
+                ]
+                : []),
             common_module_1.CommonModule,
             whatsapp_module_1.WhatsappModule,
             ai_module_1.AiModule,
